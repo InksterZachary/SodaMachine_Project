@@ -26,13 +26,66 @@ namespace SodaMachine
         //When all is said and done this method will return a list of coin objects that the customer will use a payment for their soda.
         public List<Coin> GatherCoinsFromWallet(Can selectedCan)
         {
-          
+            List<Coin> payment = new List<Coin>();
+            double n = 0;
+            double difference = selectedCan.Price - n;
+            while(n < selectedCan.Price)
+            {
+                Console.WriteLine("Please choose your coins one at a time. Total owed is: " + difference);
+                string userChoice = Console.ReadLine();
+                if(userChoice == "quarter")
+                {
+                     GetCoinFromWallet("quarter");
+                     n += Wallet.quarter.Value;
+                }
+                else if(userChoice == "dime")
+                {
+                    GetCoinFromWallet("dime");
+                    n += Wallet.dime.Value;
+                }
+                else if(userChoice == "nickel")
+                {
+                    GetCoinFromWallet("nickel");
+                    n += Wallet.nickel.Value;
+                }
+                else if(userChoice == "penny")
+                {
+                    GetCoinFromWallet("penny");
+                    n += Wallet.penny.Value;
+                }
+                else
+                {
+                    Console.WriteLine("Insufficient funds. Transaction cancelled.");
+                    return null;
+                }
+            }
+            return payment;
         }
         //Returns a coin object from the wallet based on the name passed into it.
         //Returns null if no coin can be found
         public Coin GetCoinFromWallet(string coinName)
         {
-            
+            if(coinName == Wallet.quarter.Name)
+            {
+                Wallet.Coins.Remove(Wallet.quarter);
+                return Wallet.quarter;
+            }
+            else if(coinName == Wallet.dime.Name)
+            {
+                Wallet.Coins.Remove(Wallet.dime);
+                return Wallet.dime;
+            }
+            else if(coinName == Wallet.nickel.Name)
+            {
+                Wallet.Coins.Remove(Wallet.nickel);
+                return Wallet.nickel;
+            }
+            else if(coinName == Wallet.penny.Name)
+            {
+                Wallet.Coins.Remove(Wallet.penny);
+                return Wallet.penny;
+            }
+            return null;
         }
         //Takes in a list of coin objects to add into the customers wallet.
         public void AddCoinsIntoWallet(List<Coin> coinsToAdd)

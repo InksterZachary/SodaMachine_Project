@@ -35,22 +35,22 @@ namespace SodaMachine
             for (int i = 0; i < 15; i++)
             {
                 _register.Add(penny = new Penny());
-                i++;
+                
             }
             for (int i = 0; i < 12; i++)
             {
                 _register.Add(quarter = new Quarter());
-                i++;
+                
             }
             for (int i = 0; i < 17; i++)
             {
                 _register.Add(nickel = new Nickel());
-                i++;
+                
             }
             for (int i = 0; i < 10; i++)
             {
                 _register.Add(dime = new Dime());
-                i++;
+                
             }
         }
         public void FillInventory()
@@ -92,6 +92,7 @@ namespace SodaMachine
                 "(2) Orange Soda\n" +
                 "(3) Cola");
             GetSodaFromInventory(sodaChoice);
+            customer.GatherCoinsFromWallet(sodaChoice);
 
         }
         //Gets a soda from the inventory based on the name of the soda.
@@ -122,23 +123,26 @@ namespace SodaMachine
           //return choice
         }
 
-        //This is the main method for calculating the result of the transaction.
-        //It takes in the payment from the customer, the soda object they selected, and the customer who is purchasing the soda.
-        //This is the method that will determine the following:
+        ///This is the main method for calculating the result of the transaction.
+        ///It takes in the payment from the customer, the soda object they selected, and the customer who is purchasing the soda.
+        ///This is the method that will determine the following:
         //If the payment is greater than the price of the soda, and if the sodamachine has enough change to return: Dispense soda, and change to the customer.
         //If the payment is greater than the cost of the soda, but the machine does not have ample change: Dispense payment back to the customer.
         //If the payment is exact to the cost of the soda:  Dispense soda.
-        //If the payment does not meet the cost of the soda: dispense payment back to the customer.
+        ///If the payment does not meet the cost of the soda: dispense payment back to the customer.
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
-            if(TotalCoinValue(payment) < chosenSoda.Price)
+            
+            if (TotalCoinValue(payment) < chosenSoda.Price)
             {
                 Console.WriteLine("Insufficient funds. We are replacing the chosen soda.");
                 _inventory.Add(chosenSoda);
 
             }
-            GatherChange(chosenSoda.Price);
-            
+            else if (TotalCoinValue(payment) > chosenSoda.Price)
+            {
+
+            }
         }
 
         private List<Coin> GatherChange(double changeValue)

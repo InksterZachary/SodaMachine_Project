@@ -10,8 +10,13 @@ namespace SodaMachine
     {
         static void Main(string[] args)
         {
-            Simulation simulation = new Simulation();
-            simulation.Simulate();
+            //Simulation simulation = new Simulation();
+            //simulation.Simulate();
+
+            //Customer testCustomer = new Customer();
+            //Coin testCoin;
+            //testCoin = testCustomer.GetCoinFromWallet("quarter");
+
         }
     }
 }
