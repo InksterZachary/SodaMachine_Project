@@ -90,9 +90,10 @@ namespace SodaMachine
                 "Please enter the number that corresponds to your soda choice:\n" +
                 "(1) Rootbeer\n" +
                 "(2) Orange Soda\n" +
-                "(3) Cola");
+                "(3) Cola\n" +
+                "(4) To Exit selection");
             GetSodaFromInventory(sodaChoice);
-            customer.GatherCoinsFromWallet(sodaChoice);
+            //customer.GatherCoinsFromWallet(sodaChoice);
 
         }
         //Gets a soda from the inventory based on the name of the soda.
@@ -114,6 +115,11 @@ namespace SodaMachine
                 _inventory.Remove(cola);
                 return cola;
             }
+            else if(nameOfSoda == 4.ToString())
+            {
+                Console.WriteLine("Please leave room for the next customer to choose their soda.");
+                return null;
+            }
             else
             {
                 Console.WriteLine("Please enter a valid number.");
@@ -126,22 +132,48 @@ namespace SodaMachine
         ///This is the main method for calculating the result of the transaction.
         ///It takes in the payment from the customer, the soda object they selected, and the customer who is purchasing the soda.
         ///This is the method that will determine the following:
-        //If the payment is greater than the price of the soda, and if the sodamachine has enough change to return: Dispense soda, and change to the customer.
-        //If the payment is greater than the cost of the soda, but the machine does not have ample change: Dispense payment back to the customer.
-        //If the payment is exact to the cost of the soda:  Dispense soda.
+        ///If the payment is greater than the price of the soda, and if the sodamachine has enough change to return: Dispense soda, and change to the customer.
+        ///If the payment is greater than the cost of the soda, but the machine does not have ample change: Dispense payment back to the customer.
+        ///If the payment is exact to the cost of the soda:  Dispense soda.
         ///If the payment does not meet the cost of the soda: dispense payment back to the customer.
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
-            
+            double difference = TotalCoinValue(payment) - chosenSoda.Price;
             if (TotalCoinValue(payment) < chosenSoda.Price)
             {
-                Console.WriteLine("Insufficient funds. We are replacing the chosen soda.");
+                Console.WriteLine("Insufficient funds. We are replacing the chosen soda. Please retrieve your change below.");
                 _inventory.Add(chosenSoda);
-
+                customer.AddCoinsIntoWallet(payment);
             }
             else if (TotalCoinValue(payment) > chosenSoda.Price)
             {
-
+                GatherChange(difference);
+                if (GatherChange(difference) == null)
+                {
+                    Console.WriteLine("Machine does not have proper change. Please retrieve your payment, below.");
+                    _inventory.Add(chosenSoda);
+                    customer.AddCoinsIntoWallet(payment);
+                }
+                else
+                {
+                    Console.WriteLine("Have a fantastic day and don't forget your "+chosenSoda.Name);
+                    customer.AddCanToBackpack(chosenSoda);
+                    customer.AddCoinsIntoWallet(GatherChange(difference));
+                }
+            }
+            else if(TotalCoinValue(payment) == chosenSoda.Price)
+            {
+                if (_inventory.Contains(chosenSoda))
+                {
+                    Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
+                    customer.AddCanToBackpack(chosenSoda);
+                }
+                else
+                {
+                    Console.WriteLine("Sorry about that, looks like we're all out of "+chosenSoda.Name+"\n" +
+                        "Please exit the screen and make another selection, thank you!");
+                    customer.AddCoinsIntoWallet(payment);
+                }
             }
         }
 
