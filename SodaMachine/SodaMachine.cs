@@ -147,7 +147,17 @@ namespace SodaMachine
         private List<Coin> GatherChange(double changeValue)
         {
             double n = 0;
-            
+            double difference = changeValue - n;
+            while(n < changeValue)
+            {
+                if (difference > 0.25 && _register.Contains(quarter))
+                {
+                    _register.Remove(quarter);
+                    n += quarter.Value;
+                    //Add to a list ..but what list?
+                }
+                else if ()
+            }
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
