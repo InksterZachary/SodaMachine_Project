@@ -146,6 +146,7 @@ namespace SodaMachine
         //If the change cannot be made, return null.
         private List<Coin> GatherChange(double changeValue)
         {
+            List<Coin> pocketChange = new List<Coin>(); //If this doesn't work I should try = null;
             double n = 0;
             double difference = changeValue - n;
             while(n < changeValue)
@@ -154,10 +155,34 @@ namespace SodaMachine
                 {
                     _register.Remove(quarter);
                     n += quarter.Value;
-                    //Add to a list ..but what list?
+                    pocketChange.Add(quarter);
                 }
-                else if ()
+                else if (difference > 0.10 && _register.Contains(dime))
+                {
+                    _register.Remove(dime);
+                    n += dime.Value;
+                    pocketChange.Add(dime);
+                }
+                else if (difference > 0.05 && _register.Contains(nickel))
+                {
+                    _register.Remove(nickel);
+                    n += nickel.Value;
+                    pocketChange.Add(nickel);
+                }
+                else if (difference > 0.01 && _register.Contains(penny))
+                {
+                    _register.Remove(penny);
+                    n += penny.Value;
+                    pocketChange.Add(penny);
+                }
+                else
+                {
+                    Console.WriteLine("There is not enough change in the machine: transaction cancelled.");
+                    return null;
+                }
+
             }
+            return pocketChange;
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
@@ -174,9 +199,32 @@ namespace SodaMachine
         }
         //Reusable method to return a coin from the register.
         //Returns null if no coin can be found of that name.
-        private Coin GetCoinFromRegister(string name) //Not exactly sure what this one wants =come back to this one=
+        private Coin GetCoinFromRegister(string name) //Not exactly sure what this one wants =come back to this one=//SOLVED
         {
-            
+            if (name == quarter.Name && _register.Contains(quarter))
+            {
+                _register.Remove(quarter);
+                return quarter;
+            }
+            else if (name == dime.Name && _register.Contains(dime))
+            {
+                _register.Remove(dime);
+                return dime;
+            }
+            else if (name == nickel.Name && _register.Contains(nickel))
+            {
+                _register.Remove(nickel);
+                return nickel;
+            }
+            else if (name == penny.Name && _register.Contains(penny))
+            {
+                _register.Remove(penny);
+                return penny;
+            }
+            else
+            {
+                return null;
+            }
         }
         //Takes in the total payment amount and the price of can to return the change amount.
         private double DetermineChange(double totalPayment, double canPrice)
