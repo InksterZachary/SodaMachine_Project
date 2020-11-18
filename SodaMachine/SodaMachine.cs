@@ -140,10 +140,7 @@ namespace SodaMachine
             GatherChange(chosenSoda.Price);
             
         }
-        //Takes in the value of the amount of change needed.
-        //Attempts to gather all the required coins from the sodamachine's register to make change.
-        //Returns the list of coins as change to despense.
-        //If the change cannot be made, return null.
+
         private List<Coin> GatherChange(double changeValue)
         {
             List<Coin> pocketChange = new List<Coin>(); //If this doesn't work I should try = null;
@@ -153,24 +150,28 @@ namespace SodaMachine
             {
                 if (difference > 0.25 && _register.Contains(quarter))
                 {
+                    RegisterHasCoin(quarter);
                     _register.Remove(quarter);
                     n += quarter.Value;
                     pocketChange.Add(quarter);
                 }
                 else if (difference > 0.10 && _register.Contains(dime))
                 {
+                    RegisterHasCoin(dime);
                     _register.Remove(dime);
                     n += dime.Value;
                     pocketChange.Add(dime);
                 }
                 else if (difference > 0.05 && _register.Contains(nickel))
                 {
+                    RegisterHasCoin(nickel);
                     _register.Remove(nickel);
                     n += nickel.Value;
                     pocketChange.Add(nickel);
                 }
                 else if (difference > 0.01 && _register.Contains(penny))
                 {
+                    RegisterHasCoin(penny);
                     _register.Remove(penny);
                     n += penny.Value;
                     pocketChange.Add(penny);
