@@ -150,7 +150,6 @@ namespace SodaMachine
             }
             else if (TotalCoinValue(payment) > chosenSoda.Price)
             {
-                GatherChange(difference);
                 if (GatherChange(difference) == null)
                 {
                     Console.WriteLine("Machine does not have proper change. Please retrieve your payment, below.");
@@ -159,27 +158,30 @@ namespace SodaMachine
                 }
                 else
                 {
-                    Console.WriteLine("Have a fantastic day and don't forget your "+chosenSoda.Name);
+                    Console.WriteLine("Have a fantastic day and don't forget your "+chosenSoda.Name+"!");
                     customer.AddCanToBackpack(chosenSoda);
                     DepositCoinsIntoRegister(payment);
-                    customer.AddCoinsIntoWallet(GatherChange(difference));
+                    //customer.AddCoinsIntoWallet(GatherChange(difference));
                 }
             }
             else if (TotalCoinValue(payment) == chosenSoda.Price)
             {
-                if (_inventory.Contains(chosenSoda))
+                foreach (Can can in _inventory)
                 {
-                    Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
-                    DepositCoinsIntoRegister(payment);
-                    customer.AddCanToBackpack(chosenSoda);
-
+                    if (can.Name == chosenSoda.Name)
+                    {
+                        Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
+                        DepositCoinsIntoRegister(payment);
+                        customer.AddCanToBackpack(chosenSoda);
+                        UserInterface.EndMessage(chosenSoda.Name,difference);
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("Sorry about that, looks like we're all out of "+chosenSoda.Name+"\n" +
-                        "Please exit the screen and make another selection, thank you!");
-                    customer.AddCoinsIntoWallet(payment);
-                }
+            }
+            else if (TotalCoinValue(payment) == chosenSoda.Price && _inventory.Contains(chosenSoda) == false)
+            {
+                Console.WriteLine("Sorry about that, looks like we're all out of " + chosenSoda.Name + "\n" +
+                    "Please exit the screen and make another selection, thank you!");
+                customer.AddCoinsIntoWallet(payment);
             }
         }
 
@@ -187,41 +189,47 @@ namespace SodaMachine
         {
             List<Coin> pocketChange = new List<Coin>(); //If this doesn't work I should try = null;
             double n = 0;
-            double difference = changeValue - n;
-            while(n < changeValue)
+            while(n <= changeValue)
             {
+                double difference = changeValue - n;
                 Quarter quarter = new Quarter();
                 Dime dime = new Dime();
                 Nickel nickel = new Nickel();
                 Penny penny = new Penny();
-                Console.WriteLine(difference); //this is where total remaining balance should show
+                Console.WriteLine("Your change will be dispensed below\n" +
+                    "Remaining balance is:\n" +
+                    difference);
                 if (difference > 0.25)
                 { 
-                    RegisterHasCoin(quarter);
+                    RegisterHasCoin(quarter.Name);
                     GetCoinFromRegister(quarter.Name);
                     n += quarter.Value;
                     pocketChange.Add(quarter);
                 }
                 else if (difference > 0.10)
                 {
-                    RegisterHasCoin(dime);
+                    RegisterHasCoin(dime.Name);
                     GetCoinFromRegister(dime.Name);
                     n += dime.Value;
                     pocketChange.Add(dime);
                 }
                 else if (difference > 0.05)
                 {
-                    RegisterHasCoin(nickel);
+                    RegisterHasCoin(nickel.Name);
                     GetCoinFromRegister(nickel.Name);
                     n += nickel.Value;
                     pocketChange.Add(nickel);
                 }
                 else if (difference > 0.01)
                 {
-                    RegisterHasCoin(penny);
+                    RegisterHasCoin(penny.Name);
                     GetCoinFromRegister(penny.Name);
                     n += penny.Value;
                     pocketChange.Add(penny);
+                }
+                else if(difference == 0)
+                {
+                    return pocketChange;
                 }
                 else
                 {
@@ -230,20 +238,20 @@ namespace SodaMachine
                 }
 
             }
-            return pocketChange;
+            return null;
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
-        private bool RegisterHasCoin(Coin coin)
+        private bool RegisterHasCoin(string Name)
         {
-            if (_register.Contains(coin))
+            foreach (Coin coin in _register)
             {
-                return true;
+                if (Name == coin.Name)
+                {
+                    return true;
+                }
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
         //Reusable method to return a coin from the register.
         //Returns null if no coin can be found of that name.
@@ -253,22 +261,22 @@ namespace SodaMachine
             Dime dime = new Dime();
             Nickel nickel = new Nickel();
             Penny penny = new Penny();
-            if (name == quarter.Name && _register.Contains(quarter))
+            if (name == quarter.Name)
             {
                 _register.Remove(quarter);
                 return quarter;
             }
-            else if (name == dime.Name && _register.Contains(dime))
+            else if (name == dime.Name)
             {
                 _register.Remove(dime);
                 return dime;
             }
-            else if (name == nickel.Name && _register.Contains(nickel))
+            else if (name == nickel.Name)
             {
                 _register.Remove(nickel);
                 return nickel;
             }
-            else if (name == penny.Name && _register.Contains(penny))
+            else if (name == penny.Name)
             {
                 _register.Remove(penny);
                 return penny;
@@ -299,7 +307,6 @@ namespace SodaMachine
         {
             foreach(Coin coin in coins)
             {
-                coins.Remove(coin);
                 _register.Add(coin);
             }
         }

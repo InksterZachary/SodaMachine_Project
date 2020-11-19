@@ -102,7 +102,7 @@ namespace SodaMachine
         {
             foreach(Coin coin in coinsToAdd)
             {
-                coinsToAdd.Remove(coin);
+                //coinsToAdd.Remove(coin);
                 Wallet.Coins.Add(coin);
             }
         }
