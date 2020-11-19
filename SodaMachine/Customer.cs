@@ -28,30 +28,38 @@ namespace SodaMachine
         {
             List<Coin> payment = new List<Coin>();
             double n = 0;
-            double difference = selectedCan.Price - n;
-            while(n < selectedCan.Price)
+            Quarter quarter = new Quarter();
+            Dime dime = new Dime();
+            Nickel nickel = new Nickel();
+            Penny penny = new Penny();
+            while (n < selectedCan.Price)
             {
-                Console.WriteLine("Please choose your coins one at a time. Total owed is: " + difference);
+                double difference = selectedCan.Price - n;
+                Console.WriteLine("Please choose your coins one at a time. Total still owed is: "+ difference);
                 string userChoice = Console.ReadLine();
                 if(userChoice == "quarter")
                 {
-                     GetCoinFromWallet("quarter");
-                     n += Wallet.quarter.Value;
+                    GetCoinFromWallet("quarter");
+                    n += Wallet.quarter.Value;
+                    payment.Add(quarter);
                 }
                 else if(userChoice == "dime")
                 {
                     GetCoinFromWallet("dime");
                     n += Wallet.dime.Value;
+                    payment.Add(dime);
                 }
                 else if(userChoice == "nickel")
                 {
                     GetCoinFromWallet("nickel");
                     n += Wallet.nickel.Value;
+                    payment.Add(nickel);
                 }
                 else if(userChoice == "penny")
                 {
                     GetCoinFromWallet("penny");
                     n += Wallet.penny.Value;
+                    payment.Add(penny);
                 }
                 else
                 {
@@ -85,6 +93,8 @@ namespace SodaMachine
                 Wallet.Coins.Remove(Wallet.penny);
                 return Wallet.penny;
             }
+            Console.WriteLine("You don't have that coin in your wallet\n" +
+                    "Please choose a different coin.");
             return null;
         }
         //Takes in a list of coin objects to add into the customers wallet.

@@ -85,13 +85,13 @@ namespace SodaMachine
         //pass payment to the calculate transaction method to finish up the transaction based on the results.
         private void Transaction(Customer customer)
         {
-            string sodaChoice = Console.ReadLine();
             Console.WriteLine("What soda would you like to purchase?\n" +
                 "Please enter the number that corresponds to your soda choice:\n" +
                 "(1) Rootbeer \n" +
                 "(2) Orange Soda\n" +
                 "(3) Cola\n" +
                 "(4) To Exit selection");
+            string sodaChoice = Console.ReadLine();
             GetSodaFromInventory(sodaChoice);
             CalculateTransaction(customer.GatherCoinsFromWallet(GetSodaFromInventory(sodaChoice)), GetSodaFromInventory(sodaChoice), customer); //need to change sodaChoice from being a string to a Can //MAYBE SOLVED
         }
@@ -125,7 +125,8 @@ namespace SodaMachine
             else
             {
                 Console.WriteLine("Please enter a valid number.");
-                GetSodaFromInventory(nameOfSoda);
+                string newChoice = Console.ReadLine();
+                GetSodaFromInventory(newChoice);
             }
             return null;
           //return choice
@@ -140,7 +141,7 @@ namespace SodaMachine
         ///If the payment does not meet the cost of the soda: dispense payment back to the customer.
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
-            double difference = TotalCoinValue(payment) - chosenSoda.Price;
+            double difference = DetermineChange(TotalCoinValue(payment), chosenSoda.Price);
             if (TotalCoinValue(payment) < chosenSoda.Price)
             {
                 Console.WriteLine("Insufficient funds. We are replacing the chosen soda. Please retrieve your change below.");
@@ -160,15 +161,18 @@ namespace SodaMachine
                 {
                     Console.WriteLine("Have a fantastic day and don't forget your "+chosenSoda.Name);
                     customer.AddCanToBackpack(chosenSoda);
+                    DepositCoinsIntoRegister(payment);
                     customer.AddCoinsIntoWallet(GatherChange(difference));
                 }
             }
-            else if(TotalCoinValue(payment) == chosenSoda.Price)
+            else if (TotalCoinValue(payment) == chosenSoda.Price)
             {
                 if (_inventory.Contains(chosenSoda))
                 {
                     Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
+                    DepositCoinsIntoRegister(payment);
                     customer.AddCanToBackpack(chosenSoda);
+
                 }
                 else
                 {
@@ -190,31 +194,32 @@ namespace SodaMachine
                 Dime dime = new Dime();
                 Nickel nickel = new Nickel();
                 Penny penny = new Penny();
-                if (difference > 0.25 && _register.Contains(quarter))
+                Console.WriteLine(difference); //this is where total remaining balance should show
+                if (difference > 0.25)
                 { 
                     RegisterHasCoin(quarter);
-                    _register.Remove(quarter);
+                    GetCoinFromRegister(quarter.Name);
                     n += quarter.Value;
                     pocketChange.Add(quarter);
                 }
-                else if (difference > 0.10 && _register.Contains(dime))
+                else if (difference > 0.10)
                 {
                     RegisterHasCoin(dime);
-                    _register.Remove(dime);
+                    GetCoinFromRegister(dime.Name);
                     n += dime.Value;
                     pocketChange.Add(dime);
                 }
-                else if (difference > 0.05 && _register.Contains(nickel))
+                else if (difference > 0.05)
                 {
                     RegisterHasCoin(nickel);
-                    _register.Remove(nickel);
+                    GetCoinFromRegister(nickel.Name);
                     n += nickel.Value;
                     pocketChange.Add(nickel);
                 }
-                else if (difference > 0.01 && _register.Contains(penny))
+                else if (difference > 0.01)
                 {
                     RegisterHasCoin(penny);
-                    _register.Remove(penny);
+                    GetCoinFromRegister(penny.Name);
                     n += penny.Value;
                     pocketChange.Add(penny);
                 }
@@ -229,9 +234,9 @@ namespace SodaMachine
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
-        private bool RegisterHasCoin(Coin name)
+        private bool RegisterHasCoin(Coin coin)
         {
-            if (_register.Contains(name))
+            if (_register.Contains(coin))
             {
                 return true;
             }
@@ -282,13 +287,11 @@ namespace SodaMachine
         //Takes in a list of coins to return the total value of the coins as a double.
         private double TotalCoinValue(List<Coin> payment)
         {
-            double totalValue;
-            double n = 0;
+            double totalValue = 0;
             foreach (Coin coin in payment)
             {
-                n += coin.Value;
+                totalValue += coin.Value;
             }
-            totalValue = n;
             return totalValue;
         }
         //Puts a list of coins into the soda machines register.

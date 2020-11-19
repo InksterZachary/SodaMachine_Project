@@ -14,6 +14,10 @@ namespace SodaMachine
             simulation.Simulate();
             Console.ReadLine();
 
+            //SodaMachine testRun = new SodaMachine();
+            //Customer Zachary = new Customer();
+            //testRun.BeginTransaction(Zachary);
+            //Console.ReadLine();
             //Customer testCustomer = new Customer();
             //Coin testCoin;
             //testCoin = testCustomer.GetCoinFromWallet("quarter");
