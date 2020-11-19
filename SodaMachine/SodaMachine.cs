@@ -227,7 +227,7 @@ namespace SodaMachine
                     n += penny.Value;
                     pocketChange.Add(penny);
                 }
-                else if(difference == 0)
+                else if(difference == 0 || difference <= 0.009)
                 {
                     return pocketChange;
                 }
