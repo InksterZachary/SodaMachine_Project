@@ -120,7 +120,10 @@ namespace SodaMachine
             else if(nameOfSoda == 4.ToString())
             {
                 Console.WriteLine("Please leave room for the next customer to choose their soda.");
-                return null;
+                UserInterface.EndMessage("day",0);
+                Console.Clear();
+                Customer cus = new Customer();
+                BeginTransaction(cus);
             }
             else
             {
@@ -196,9 +199,17 @@ namespace SodaMachine
                 Dime dime = new Dime();
                 Nickel nickel = new Nickel();
                 Penny penny = new Penny();
-                Console.WriteLine("Your change will be dispensed below\n" +
-                    "Remaining balance is:\n" +
-                    difference);
+                System.Threading.Thread.Sleep(500);
+                if(difference > 0.01)
+                {
+                    Console.WriteLine("Your change will be dispensed below\n" +
+                        "Remaining balance is:\n" +
+                        difference);
+                }
+                else if(difference < 0.01)
+                {
+                    Console.WriteLine("The rest of your change will be dispense below.");
+                }
                 if (difference > 0.25)
                 { 
                     RegisterHasCoin(quarter.Name);
@@ -227,18 +238,18 @@ namespace SodaMachine
                     n += penny.Value;
                     pocketChange.Add(penny);
                 }
-                else if(difference == 0 || difference <= 0.009)
+                else if(difference == 0)
                 {
                     return pocketChange;
                 }
-                else
+                else if (n < changeValue + 0.01)
                 {
-                    Console.WriteLine("There is not enough change in the machine: transaction cancelled.");
-                    return null;
+                    return pocketChange;
                 }
-
             }
+            Console.WriteLine("There is not enough change in the machine: transaction cancelled.");
             return null;
+            
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.

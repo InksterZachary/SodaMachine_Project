@@ -32,6 +32,10 @@ namespace SodaMachine
             Dime dime = new Dime();
             Nickel nickel = new Nickel();
             Penny penny = new Penny();
+            //if(selectedCan == null)
+            //{
+            //    UserInterface.EndMessage("day", 0);
+            //}
             while (n < selectedCan.Price)
             {
                 double difference = selectedCan.Price - n;
