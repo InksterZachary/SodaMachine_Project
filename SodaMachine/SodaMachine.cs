@@ -11,13 +11,6 @@ namespace SodaMachine
         //Member Variables (Has A)
         private List<Coin> _register;
         private List<Can> _inventory;
-        public Penny penny;
-        public Nickel nickel;
-        public Dime dime;
-        public Quarter quarter;
-        public OrangeSoda orangeSoda;
-        public Cola cola;
-        public RootBeer rootbeer;
 
         //Constructor (Spawner)
         public SodaMachine()
@@ -32,24 +25,28 @@ namespace SodaMachine
 
         public void FillRegister() //maybe needs to be like penny = new Penny()
         {
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 50; i++)
             {
-                _register.Add(penny = new Penny());
+                Penny penny = new Penny();
+                _register.Add(penny);
                 
             }
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 20; i++)
             {
-                _register.Add(quarter = new Quarter());
+                Quarter quarter = new Quarter();
+                _register.Add(quarter);
                 
             }
-            for (int i = 0; i < 17; i++)
+            for (int i = 0; i < 20; i++)
             {
-                _register.Add(nickel = new Nickel());
+                Nickel nickel = new Nickel();
+                _register.Add(nickel);
                 
             }
             for (int i = 0; i < 10; i++)
             {
-                _register.Add(dime = new Dime());
+                Dime dime = new Dime();
+                _register.Add(dime);
                 
             }
         }
@@ -57,15 +54,18 @@ namespace SodaMachine
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    _inventory.Add(orangeSoda = new OrangeSoda());
+                    OrangeSoda orangeSoda = new OrangeSoda();
+                    _inventory.Add(orangeSoda);
                 }
                 for (int i = 0; i < 5; i++)
                 {
-                    _inventory.Add(cola = new Cola());
+                    Cola cola = new Cola();
+                    _inventory.Add(cola);
                 }
                 for (int i = 0; i < 5; i++)
                 {
-                    _inventory.Add(rootbeer = new RootBeer());
+                    RootBeer rootBeer = new RootBeer();
+                    _inventory.Add(rootBeer);
                 }
             }
         //Method to be called to start a transaction.
@@ -88,13 +88,12 @@ namespace SodaMachine
             string sodaChoice = Console.ReadLine();
             Console.WriteLine("What soda would you like to purchase?\n" +
                 "Please enter the number that corresponds to your soda choice:\n" +
-                "(1) Rootbeer\n" +
+                "(1) Rootbeer \n" +
                 "(2) Orange Soda\n" +
                 "(3) Cola\n" +
                 "(4) To Exit selection");
             GetSodaFromInventory(sodaChoice);
-            //customer.GatherCoinsFromWallet(sodaChoice);
-
+            CalculateTransaction(customer.GatherCoinsFromWallet(GetSodaFromInventory(sodaChoice)), GetSodaFromInventory(sodaChoice), customer); //need to change sodaChoice from being a string to a Can //MAYBE SOLVED
         }
         //Gets a soda from the inventory based on the name of the soda.
         private Can GetSodaFromInventory(string nameOfSoda)
@@ -102,16 +101,19 @@ namespace SodaMachine
             //access list _inventory and remove soda user chooses
             if (nameOfSoda == 1.ToString())
             {
+                RootBeer rootbeer = new RootBeer();
                 _inventory.Remove(rootbeer);
                 return rootbeer;
             }
             else if(nameOfSoda == 2.ToString())
             {
+                OrangeSoda orangeSoda = new OrangeSoda();
                 _inventory.Remove(orangeSoda);
                 return orangeSoda;
             }
             else if(nameOfSoda == 3.ToString())
             {
+                Cola cola = new Cola();
                 _inventory.Remove(cola);
                 return cola;
             }
@@ -184,8 +186,12 @@ namespace SodaMachine
             double difference = changeValue - n;
             while(n < changeValue)
             {
+                Quarter quarter = new Quarter();
+                Dime dime = new Dime();
+                Nickel nickel = new Nickel();
+                Penny penny = new Penny();
                 if (difference > 0.25 && _register.Contains(quarter))
-                {
+                { 
                     RegisterHasCoin(quarter);
                     _register.Remove(quarter);
                     n += quarter.Value;
@@ -238,6 +244,10 @@ namespace SodaMachine
         //Returns null if no coin can be found of that name.
         private Coin GetCoinFromRegister(string name) //Not exactly sure what this one wants =come back to this one=//SOLVED
         {
+            Quarter quarter = new Quarter();
+            Dime dime = new Dime();
+            Nickel nickel = new Nickel();
+            Penny penny = new Penny();
             if (name == quarter.Name && _register.Contains(quarter))
             {
                 _register.Remove(quarter);
