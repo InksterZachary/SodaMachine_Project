@@ -68,8 +68,6 @@ namespace SodaMachine
                     _inventory.Add(rootBeer);
                 }
             }
-        //Method to be called to start a transaction.
-        //Takes in a customer which can be passed freely to which ever method needs it.
         public void BeginTransaction(Customer customer)
         {
             bool willProceed = UserInterface.DisplayWelcomeInstructions(_inventory);
@@ -79,10 +77,7 @@ namespace SodaMachine
             }
         }
         
-        //This is the main transaction logic think of it like "runGame".  This is where the user will be prompted for the desired soda. DONE
-        //grab the desired soda from the inventory. 
-        //get payment from the user.
-        //pass payment to the calculate transaction method to finish up the transaction based on the results.
+
         private void Transaction(Customer customer)
         {
             Console.WriteLine("What soda would you like to purchase?\n" +
@@ -92,12 +87,13 @@ namespace SodaMachine
                 "(3) Cola\n" +
                 "(4) To Exit selection");
             string sodaChoice = Console.ReadLine();
-            CalculateTransaction(customer.GatherCoinsFromWallet(GetSodaFromInventory(sodaChoice)), GetSodaFromInventory(sodaChoice), customer); //need to change sodaChoice from being a string to a Can //MAYBE SOLVED
+            Console.WriteLine("Due to the high traffic, please have coins ready in case card reader is down.");
+            CalculateTransaction(customer.GatherCoinsFromWallet(GetSodaFromInventory(sodaChoice)), GetSodaFromInventory(sodaChoice), customer);
         }
-        //Gets a soda from the inventory based on the name of the soda.
+        
         private Can GetSodaFromInventory(string nameOfSoda)
         {
-            //access list _inventory and remove soda user chooses
+            
             if (nameOfSoda == 1.ToString())
             {
                 RootBeer rootbeer = new RootBeer();
@@ -133,14 +129,6 @@ namespace SodaMachine
             return null;
           //return choice
         }
-
-        ///This is the main method for calculating the result of the transaction.
-        ///It takes in the payment from the customer, the soda object they selected, and the customer who is purchasing the soda.
-        ///This is the method that will determine the following:
-        ///If the payment is greater than the price of the soda, and if the sodamachine has enough change to return: Dispense soda, and change to the customer.
-        ///If the payment is greater than the cost of the soda, but the machine does not have ample change: Dispense payment back to the customer.
-        ///If the payment is exact to the cost of the soda:  Dispense soda.
-        ///If the payment does not meet the cost of the soda: dispense payment back to the customer.
         
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
@@ -154,6 +142,10 @@ namespace SodaMachine
                     Console.WriteLine("Insufficient funds. We are replacing the chosen soda. Please retrieve your change below.");
                     _inventory.Add(chosenSoda);
                     customer.AddCoinsIntoWallet(payment);
+                    Console.WriteLine("Please select 'Enter' to end transaction.");
+                    Console.ReadLine();
+                    Console.Clear();
+                    UserInterface.DisplayWelcomeInstructions(_inventory);
                 }
                 else if (TotalCoinValue(payment) > chosenSoda.Price)
                 {
@@ -162,12 +154,20 @@ namespace SodaMachine
                         Console.WriteLine("Machine does not have proper change. Please retrieve your payment, below.");
                         _inventory.Add(chosenSoda);
                         customer.AddCoinsIntoWallet(payment);
+                        Console.WriteLine("Please select 'Enter' to end transaction.");
+                        Console.ReadLine();
+                        Console.Clear();
+                        UserInterface.DisplayWelcomeInstructions(_inventory);
                     }
                     else
                     {
                         customer.AddCanToBackpack(chosenSoda);
                         DepositCoinsIntoRegister(payment);
                         UserInterface.EndMessage(chosenSoda.Name, difference);
+                        Console.WriteLine("Please select 'Enter' to end transaction.");
+                        Console.ReadLine();
+                        Console.Clear();
+                        UserInterface.DisplayWelcomeInstructions(_inventory);
 
                     }
                 }
@@ -180,6 +180,7 @@ namespace SodaMachine
                             Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
                             DepositCoinsIntoRegister(payment);
                             customer.AddCanToBackpack(chosenSoda);
+                            Console.Clear();
                             UserInterface.DisplayWelcomeInstructions(_inventory);
                         }
                     }
@@ -187,8 +188,11 @@ namespace SodaMachine
                 else if (TotalCoinValue(payment) == chosenSoda.Price && _inventory.Contains(chosenSoda) == false)
                 {
                     Console.WriteLine("Sorry about that, looks like we're all out of " + chosenSoda.Name + "\n" +
-                        "Please exit the screen and make another selection, thank you!");
+                        "Please select 'enter' exit the screen and make another selection, thank you!");
                     customer.AddCoinsIntoWallet(payment);
+                    Console.ReadLine();
+                    Console.Clear();
+                    UserInterface.DisplayWelcomeInstructions(_inventory);
                 }
             }
             else if(payChoice == "card")
@@ -204,6 +208,7 @@ namespace SodaMachine
                                 "To end transaction please press 'enter'");
                             customer.AddCanToBackpack(chosenSoda);
                             Console.ReadLine();
+                            Console.Clear();
                             UserInterface.DisplayWelcomeInstructions(_inventory);
                         }
                     }
@@ -213,7 +218,7 @@ namespace SodaMachine
 
         private List<Coin> GatherChange(double changeValue)
         {
-            List<Coin> pocketChange = new List<Coin>(); //If this doesn't work I should try = null;
+            List<Coin> pocketChange = new List<Coin>();
             double n = 0;
             while(n <= changeValue)
             {
@@ -267,8 +272,6 @@ namespace SodaMachine
             Console.WriteLine("There is not enough change in the machine: transaction cancelled.");
             return null;   
         }
-        //Reusable method to check if the register has a coin of that name.
-        //If it does have one, return true.  Else, false.
         private bool RegisterHasCoin(string Name)
         {
             foreach (Coin coin in _register)
@@ -311,13 +314,13 @@ namespace SodaMachine
                 return null;
             }
         }
-        //Takes in the total payment amount and the price of can to return the change amount.
+
         private double DetermineChange(double totalPayment, double canPrice)
         {
             double change = totalPayment - canPrice;
             return change;
         }
-        //Takes in a list of coins to return the total value of the coins as a double.
+
         private static double TotalCoinValue(CreditCard credicard)
         {
             return credicard.Value;
@@ -331,7 +334,7 @@ namespace SodaMachine
             }
             return Math.Round(totalValue,3);
         }
-        //Puts a list of coins into the soda machines register.
+
         private void DepositCoinsIntoRegister(List<Coin> coins)
         {
             foreach(Coin coin in coins)

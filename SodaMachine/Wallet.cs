@@ -23,7 +23,7 @@ namespace SodaMachine
             GrabCard();
         }
         //Member Methods (Can Do)
-        //Fills wallet with starting money
+
         public void GrabCard()
         {
             Coins.Add(cc = new CreditCard());
@@ -32,7 +32,7 @@ namespace SodaMachine
         {
             for (int i = 0; i < 15; i++)
             {
-                //Penny penny = new Penny(); <----Charle's pointed out this is the better way to do this since the Wallet won't always have a specific coin or coins at all
+                
                 Coins.Add(penny = new Penny());
             }
             for (int i = 0; i < 12; i++)
