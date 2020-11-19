@@ -13,7 +13,11 @@ namespace SodaMachine
             Simulation simulation = new Simulation();
             simulation.Simulate();
             Console.ReadLine();
-
+            //Penny penny = new Penny();
+            //Nickel nickel = new Nickel();
+            //double pennies = penny.Value + nickel.Value;
+            //Console.WriteLine(pennies);
+            //Console.ReadLine();
             //SodaMachine testRun = new SodaMachine();
             //Customer Zachary = new Customer();
             //testRun.BeginTransaction(Zachary);

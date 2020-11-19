@@ -191,7 +191,7 @@ namespace SodaMachine
             Console.WriteLine($"Enjoy your {sodaName}.");
             if(changeAmount > 0)
             {
-                Console.WriteLine($"Despensing ${changeAmount}");
+                Console.WriteLine($"Your change was: ${changeAmount}");
             }
             Console.ReadLine();
         }

@@ -161,10 +161,10 @@ namespace SodaMachine
                 }
                 else
                 {
-                    Console.WriteLine("Have a fantastic day and don't forget your "+chosenSoda.Name+"!");
                     customer.AddCanToBackpack(chosenSoda);
                     DepositCoinsIntoRegister(payment);
-                    //customer.AddCoinsIntoWallet(GatherChange(difference));
+                    UserInterface.EndMessage(chosenSoda.Name, difference);
+                    
                 }
             }
             else if (TotalCoinValue(payment) == chosenSoda.Price)
@@ -176,7 +176,7 @@ namespace SodaMachine
                         Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
                         DepositCoinsIntoRegister(payment);
                         customer.AddCanToBackpack(chosenSoda);
-                        UserInterface.EndMessage(chosenSoda.Name,difference);
+                        UserInterface.DisplayWelcomeInstructions(_inventory);
                     }
                 }
             }
@@ -200,21 +200,12 @@ namespace SodaMachine
                 Nickel nickel = new Nickel();
                 Penny penny = new Penny();
                 System.Threading.Thread.Sleep(500);
-                if(difference > 0.01)
-                {
-                    Console.WriteLine("Your change will be dispensed below\n" +
-                        "Remaining balance is:\n" +
-                        difference);
-                }
-                else if(difference < 0.01)
-                {
-                    Console.WriteLine("The rest of your change will be dispense below.");
-                }
                 if (difference > 0.25)
                 { 
                     RegisterHasCoin(quarter.Name);
                     GetCoinFromRegister(quarter.Name);
                     n += quarter.Value;
+                    Console.WriteLine("Dispensing:"+quarter.Name);
                     pocketChange.Add(quarter);
                 }
                 else if (difference > 0.10)
@@ -222,6 +213,7 @@ namespace SodaMachine
                     RegisterHasCoin(dime.Name);
                     GetCoinFromRegister(dime.Name);
                     n += dime.Value;
+                    Console.WriteLine("Dispensing:" + dime.Name);
                     pocketChange.Add(dime);
                 }
                 else if (difference > 0.05)
@@ -229,27 +221,28 @@ namespace SodaMachine
                     RegisterHasCoin(nickel.Name);
                     GetCoinFromRegister(nickel.Name);
                     n += nickel.Value;
+                    Console.WriteLine("Dispensing:" + nickel.Name);
                     pocketChange.Add(nickel);
                 }
-                else if (difference > 0.01)
+                else if (difference < 0.00)
                 {
                     RegisterHasCoin(penny.Name);
                     GetCoinFromRegister(penny.Name);
-                    n += penny.Value;
-                    pocketChange.Add(penny);
+                    n += difference;
                 }
                 else if(difference == 0)
                 {
+                    Console.WriteLine("Please collect your change from below.");
                     return pocketChange;
                 }
                 else if (n < changeValue + 0.01)
                 {
+                    Console.WriteLine("Your change will be dispensed below.");
                     return pocketChange;
                 }
             }
             Console.WriteLine("There is not enough change in the machine: transaction cancelled.");
-            return null;
-            
+            return null;   
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
@@ -264,9 +257,7 @@ namespace SodaMachine
             }
             return false;
         }
-        //Reusable method to return a coin from the register.
-        //Returns null if no coin can be found of that name.
-        private Coin GetCoinFromRegister(string name) //Not exactly sure what this one wants =come back to this one=//SOLVED
+        private Coin GetCoinFromRegister(string name)
         {
             Quarter quarter = new Quarter();
             Dime dime = new Dime();
@@ -311,7 +302,7 @@ namespace SodaMachine
             {
                 totalValue += coin.Value;
             }
-            return totalValue;
+            return Math.Round(totalValue,3);
         }
         //Puts a list of coins into the soda machines register.
         private void DepositCoinsIntoRegister(List<Coin> coins)

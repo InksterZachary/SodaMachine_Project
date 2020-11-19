@@ -32,14 +32,11 @@ namespace SodaMachine
             Dime dime = new Dime();
             Nickel nickel = new Nickel();
             Penny penny = new Penny();
-            //if(selectedCan == null)
-            //{
-            //    UserInterface.EndMessage("day", 0);
-            //}
+            Console.WriteLine("Please choose your coins one at a time.");
             while (n < selectedCan.Price)
             {
                 double difference = selectedCan.Price - n;
-                Console.WriteLine("Please choose your coins one at a time. Total still owed is: "+ difference);
+                Console.WriteLine("Total still owed is: "+ difference);
                 string userChoice = Console.ReadLine();
                 if(userChoice == "quarter")
                 {
@@ -68,7 +65,7 @@ namespace SodaMachine
                 else
                 {
                     Console.WriteLine("Insufficient funds. Transaction cancelled.");
-                    return null;
+                    Console.Clear();
                 }
             }
             return payment;
