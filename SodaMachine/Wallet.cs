@@ -14,14 +14,20 @@ namespace SodaMachine
         public Nickel nickel;
         public Dime dime;
         public Quarter quarter;
+        public CreditCard cc;
         //Constructor (Spawner)
         public Wallet()
         {
             Coins = new List<Coin>();
             FillWallet();
+            GrabCard();
         }
         //Member Methods (Can Do)
         //Fills wallet with starting money
+        public void GrabCard()
+        {
+            Coins.Add(cc = new CreditCard());
+        }
         private void FillWallet()
         {
             for (int i = 0; i < 15; i++)

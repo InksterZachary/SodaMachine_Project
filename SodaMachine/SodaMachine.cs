@@ -92,7 +92,6 @@ namespace SodaMachine
                 "(3) Cola\n" +
                 "(4) To Exit selection");
             string sodaChoice = Console.ReadLine();
-            GetSodaFromInventory(sodaChoice);
             CalculateTransaction(customer.GatherCoinsFromWallet(GetSodaFromInventory(sodaChoice)), GetSodaFromInventory(sodaChoice), customer); //need to change sodaChoice from being a string to a Can //MAYBE SOLVED
         }
         //Gets a soda from the inventory based on the name of the soda.
@@ -142,49 +141,73 @@ namespace SodaMachine
         ///If the payment is greater than the cost of the soda, but the machine does not have ample change: Dispense payment back to the customer.
         ///If the payment is exact to the cost of the soda:  Dispense soda.
         ///If the payment does not meet the cost of the soda: dispense payment back to the customer.
+        
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
-            double difference = DetermineChange(TotalCoinValue(payment), chosenSoda.Price);
-            if (TotalCoinValue(payment) < chosenSoda.Price)
+            Console.WriteLine("Would you like to use card or coin to complete this transaction?");
+            string payChoice = Console.ReadLine();
+            if (payChoice == "coin")
             {
-                Console.WriteLine("Insufficient funds. We are replacing the chosen soda. Please retrieve your change below.");
-                _inventory.Add(chosenSoda);
-                customer.AddCoinsIntoWallet(payment);
-            }
-            else if (TotalCoinValue(payment) > chosenSoda.Price)
-            {
-                if (GatherChange(difference) == null)
+                double difference = DetermineChange(TotalCoinValue(payment), chosenSoda.Price);
+                if (TotalCoinValue(payment) < chosenSoda.Price)
                 {
-                    Console.WriteLine("Machine does not have proper change. Please retrieve your payment, below.");
+                    Console.WriteLine("Insufficient funds. We are replacing the chosen soda. Please retrieve your change below.");
                     _inventory.Add(chosenSoda);
                     customer.AddCoinsIntoWallet(payment);
                 }
-                else
+                else if (TotalCoinValue(payment) > chosenSoda.Price)
                 {
-                    customer.AddCanToBackpack(chosenSoda);
-                    DepositCoinsIntoRegister(payment);
-                    UserInterface.EndMessage(chosenSoda.Name, difference);
-                    
-                }
-            }
-            else if (TotalCoinValue(payment) == chosenSoda.Price)
-            {
-                foreach (Can can in _inventory)
-                {
-                    if (can.Name == chosenSoda.Name)
+                    if (GatherChange(difference) == null)
                     {
-                        Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
-                        DepositCoinsIntoRegister(payment);
+                        Console.WriteLine("Machine does not have proper change. Please retrieve your payment, below.");
+                        _inventory.Add(chosenSoda);
+                        customer.AddCoinsIntoWallet(payment);
+                    }
+                    else
+                    {
                         customer.AddCanToBackpack(chosenSoda);
-                        UserInterface.DisplayWelcomeInstructions(_inventory);
+                        DepositCoinsIntoRegister(payment);
+                        UserInterface.EndMessage(chosenSoda.Name, difference);
+
                     }
                 }
+                else if (TotalCoinValue(payment) == chosenSoda.Price)
+                {
+                    foreach (Can can in _inventory)
+                    {
+                        if (can.Name == chosenSoda.Name)
+                        {
+                            Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!");
+                            DepositCoinsIntoRegister(payment);
+                            customer.AddCanToBackpack(chosenSoda);
+                            UserInterface.DisplayWelcomeInstructions(_inventory);
+                        }
+                    }
+                }
+                else if (TotalCoinValue(payment) == chosenSoda.Price && _inventory.Contains(chosenSoda) == false)
+                {
+                    Console.WriteLine("Sorry about that, looks like we're all out of " + chosenSoda.Name + "\n" +
+                        "Please exit the screen and make another selection, thank you!");
+                    customer.AddCoinsIntoWallet(payment);
+                }
             }
-            else if (TotalCoinValue(payment) == chosenSoda.Price && _inventory.Contains(chosenSoda) == false)
+            else if(payChoice == "card")
             {
-                Console.WriteLine("Sorry about that, looks like we're all out of " + chosenSoda.Name + "\n" +
-                    "Please exit the screen and make another selection, thank you!");
-                customer.AddCoinsIntoWallet(payment);
+                if (TotalCoinValue(customer.Wallet.cc) >= chosenSoda.Price)
+                {
+                    foreach (Can can in _inventory)
+                    {
+                        if (can.Name == chosenSoda.Name)
+                        {
+                            customer.Wallet.cc.Credit(chosenSoda.Price);
+                            Console.WriteLine("Please retrieve your can of " + chosenSoda.Name + " after it is dispensed and have a wonderful day!\n" +
+                                "To end transaction please press 'enter'");
+                            customer.AddCanToBackpack(chosenSoda);
+                            Console.ReadLine();
+                            UserInterface.DisplayWelcomeInstructions(_inventory);
+                        }
+                    }
+                }
             }
         }
 
@@ -295,7 +318,11 @@ namespace SodaMachine
             return change;
         }
         //Takes in a list of coins to return the total value of the coins as a double.
-        private double TotalCoinValue(List<Coin> payment)
+        private static double TotalCoinValue(CreditCard credicard)
+        {
+            return credicard.Value;
+        }
+        private static double TotalCoinValue(List<Coin> payment)
         {
             double totalValue = 0;
             foreach (Coin coin in payment)

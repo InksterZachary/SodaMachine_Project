@@ -11,7 +11,7 @@ namespace SodaMachine
         //Intro message that asks user if they wish to make a purchase
         public static bool DisplayWelcomeInstructions(List<Can> sodaOptions)
         {
-            OutputText("\nWelcome to the soda machine.  We only take coins as payment \n"); //Change when on extra credit step
+            OutputText("\nWelcome to the soda machine.  We take coins and CreditCard \n"); 
             OutputText("At a glance, these are the drink options:\n");
             PrintOptions(sodaOptions);
             bool willProceed = ContinuePrompt("\nWould you like to make a purchase? (y/n)");
